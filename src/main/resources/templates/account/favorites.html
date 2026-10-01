@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Sản Phẩm Yêu Thích - HVTC BAKERY</title>
+</head>
+<body>
+<div layout:fragment="content" class="py-5">
+    <div class="container">
+        <h3 class="fw-bold font-serif mb-4 text-primary"><i class="fas fa-heart text-danger me-2"></i> Danh Sách Bánh Yêu Thích</h3>
+
+        <div th:if="${favorites == null or #lists.isEmpty(favorites)}" class="text-center py-5 bg-white rounded-4 border shadow-sm">
+            <i class="far fa-heart fa-4x text-muted opacity-50 mb-3"></i>
+            <h5>Bạn chưa lưu chiếc bánh nào vào mục yêu thích</h5>
+            <p class="text-muted small">Bấm icon trái tim trên các món bánh bạn thích để lưu lại xem sau nhé!</p>
+            <a th:href="@{/products}" class="btn-hvtc-primary">Khám phá bánh tươi</a>
+        </div>
+
+        <div class="row g-4" th:if="${favorites != null and not #lists.isEmpty(favorites)}">
+            <div class="col-6 col-md-4 col-lg-3" th:each="fav : ${favorites}">
+                <div class="hvtc-product-card">
+                    <form th:action="@{'/favorites/remove/' + ${fav.product.id}}" method="post">
+                        <button type="submit" class="hvtc-fav-btn active" title="Bỏ yêu thích">
+                            <i class="fas fa-heart text-danger"></i>
+                        </button>
+                    </form>
+
+                    <a th:href="@{'/product/' + ${fav.product.slug}}" class="hvtc-product-img-wrap">
+                        <img th:src="${fav.product.image != null ? fav.product.image : 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600'}" th:alt="${fav.product.name}" class="hvtc-product-img">
+                    </a>
+
+                    <div class="hvtc-product-body">
+                        <div class="hvtc-product-category" th:text="${fav.product.category.name}">Category</div>
+                        <a th:href="@{'/product/' + ${fav.product.slug}}" class="hvtc-product-title" th:text="${fav.product.name}">Name</a>
+                        <div class="hvtc-product-price">
+                            <span class="price-current" th:text="${#numbers.formatDecimal(fav.product.getEffectivePrice(), 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
+                        </div>
+                        <form th:action="@{/cart/add}" method="post">
+                            <input type="hidden" name="productId" th:value="${fav.product.id}">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="btn btn-primary btn-sm rounded-pill w-100"><i class="fas fa-cart-plus me-1"></i> Thêm giỏ hàng</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Đặt Hàng Thành Công - HVTC BAKERY</title>
+</head>
+<body>
+<div layout:fragment="content" class="py-5">
+    <div class="container text-center" style="max-width: 750px;">
+        <div class="bg-white p-5 rounded-4 border shadow-sm">
+            <div class="mb-4">
+                <i class="fas fa-check-circle fa-5x text-success"></i>
+            </div>
+            <h2 class="fw-bold font-serif mb-2">ĐẶT HÀNG THÀNH CÔNG!</h2>
+            <p class="text-muted mb-4">
+                Cảm ơn bạn đã tin tưởng lựa chọn HVTC BAKERY.<br>
+                Mã đơn hàng của bạn là: <strong class="text-primary font-monospace fs-5" th:text="${order.orderCode}">HVTC-ORD-123</strong>
+            </p>
+
+            <!-- Order Info Box -->
+            <div class="p-4 bg-light rounded-4 text-start mb-4 border">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <small class="text-muted d-block">Người nhận bánh:</small>
+                        <strong th:text="${order.customerName}">Nguyễn Văn A</strong>
+                    </div>
+                    <div class="col-md-6">
+                        <small class="text-muted d-block">Số điện thoại:</small>
+                        <strong th:text="${order.phone}">0912345678</strong>
+                    </div>
+                    <div class="col-12">
+                        <small class="text-muted d-block">Địa chỉ giao bánh:</small>
+                        <strong th:text="${order.address}">Địa chỉ</strong>
+                    </div>
+                    <div class="col-md-6">
+                        <small class="text-muted d-block">Phương thức thanh toán:</small>
+                        <strong th:text="${order.paymentMethod.displayName}">COD</strong>
+                    </div>
+                    <div class="col-md-6">
+                        <small class="text-muted d-block">Tổng số tiền:</small>
+                        <strong class="text-primary fs-5" th:text="${#numbers.formatDecimal(order.getGrandTotal(), 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</strong>
+                    </div>
+                </div>
+
+                <!-- Bank Transfer QR Notice if BANK_TRANSFER -->
+                <div th:if="${order.paymentMethod.name() == 'BANK_TRANSFER'}" class="mt-4 p-3 bg-white rounded-3 border text-center">
+                    <h6 class="fw-bold text-primary mb-2"><i class="fas fa-qrcode me-2"></i> Thông Tin Chuyển Khoản Ngân Hàng</h6>
+                    <p class="small text-muted mb-2">Quý khách vui lòng chuyển khoản với nội dung là <strong>Mã đơn hàng</strong>:</p>
+                    <div class="small fw-bold">Ngân hàng: MB BANK • STK: 888888889999</div>
+                    <div class="small fw-bold">Chủ tài khoản: HVTC BAKERY TƯƠI</div>
+                    <div class="small text-danger fw-bold mt-1" th:text="'Nội dung chuyển khoản: ' + ${order.orderCode}">Nội dung</div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-center gap-3">
+                <a th:href="@{/}" class="btn-hvtc-primary">
+                    <i class="fas fa-home me-1"></i> VỀ TRANG CHỦ
+                </a>
+                <a th:href="@{/account/orders}" class="btn-hvtc-outline">
+                    <i class="fas fa-box me-1"></i> XEM ĐƠN HÀNG CỦA TÔI
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

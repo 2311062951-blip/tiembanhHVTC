@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin_base}">
+<head>
+    <title>HVTC Bakery Admin - Quản Lý Đánh Giá</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold font-serif m-0">Quản Lý Đánh Giá Của Khách Hàng</h3>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle m-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Khách Hàng</th>
+                        <th>Sản Phẩm Bánh</th>
+                        <th>Số Sao</th>
+                        <th>Nội Dung</th>
+                        <th>Ngày Đánh Giá</th>
+                        <th>Trạng Thái</th>
+                        <th class="text-end">Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="r : ${reviews}">
+                        <td class="fw-bold" th:text="${r.user.fullName}">Khách Hàng</td>
+                        <td>
+                            <a th:href="@{'/product/' + ${r.product.slug}}" target="_blank" class="text-primary text-decoration-none fw-bold" th:text="${r.product.name}">Tên Bánh</a>
+                        </td>
+                        <td class="text-warning">
+                            <i class="fas fa-star" th:each="i : ${#numbers.sequence(1, 5)}" th:classappend="${i <= r.rating} ? 'text-warning' : 'text-muted opacity-25'"></i>
+                        </td>
+                        <td class="small" th:text="${r.comment}">Nội dung đánh giá</td>
+                        <td class="small text-muted" th:text="${#temporals.format(r.createdAt, 'dd/MM/yyyy HH:mm')}">Date</td>
+                        <td>
+                            <span class="badge" th:classappend="${r.status} ? 'bg-success' : 'bg-secondary'" th:text="${r.status ? 'Hiển thị' : 'Ẩn'}">Status</span>
+                        </td>
+                        <td class="text-end">
+                            <form th:action="@{'/admin/reviews/toggle-status/' + ${r.id}}" method="post" class="d-inline me-1">
+                                <button type="submit" class="btn btn-sm rounded-circle" th:classappend="${r.status} ? 'btn-outline-warning' : 'btn-outline-success'" th:title="${r.status ? 'Ẩn đánh giá' : 'Hiển thị đánh giá'}">
+                                    <i class="fas" th:classappend="${r.status} ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                </button>
+                            </form>
+                            <form th:action="@{'/admin/reviews/delete/' + ${r.id}}" method="post" class="d-inline" onsubmit="return confirm('Xóa đánh giá này?')">
+                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle" title="Xóa đánh giá"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

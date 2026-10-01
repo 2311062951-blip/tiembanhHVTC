@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<footer th:fragment="footer" class="hvtc-footer">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <a th:href="@{/}" class="hvtc-logo-text text-white d-block mb-3">
+                    HVTC <span style="color: var(--hvtc-accent);">BAKERY</span>
+                </a>
+                <p class="small text-white mb-3" style="line-height: 1.7;">
+                    "Những chiếc bánh nhỏ - những niềm vui lớn."<br>
+                    HVTC BAKERY mang đến hương vị bánh tươi thơm nức, ngát hương bơ Pháp và trà Uji Nhật Bản mỗi ngày.
+                </p>
+                <div class="d-flex gap-3">
+                    <a href="#" class="fs-5 text-white"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="fs-5 text-white"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="fs-5 text-white"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <h5 class="text-white">Danh mục</h5>
+                <ul class="list-unstyled d-flex flex-column gap-2 small">
+                    <li><a th:href="@{/category/banh-mi}" class="text-white">Bánh mì ngàn lớp</a></li>
+                    <li><a th:href="@{/category/banh-ngot}" class="text-white">Bánh ngọt & Mousse</a></li>
+                    <li><a th:href="@{/category/banh-quy}" class="text-white">Bánh quy bơ</a></li>
+                    <li><a th:href="@{/category/socola}" class="text-white">Socola tươi</a></li>
+                    <li><a th:href="@{/category/banh-sinh-nhat}" class="text-white">Bánh sinh nhật</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <h5 class="text-white">Thông tin & Chính sách</h5>
+                <ul class="list-unstyled d-flex flex-column gap-2 small">
+                    <li><a th:href="@{/about}" class="text-white">Giới thiệu thương hiệu</a></li>
+                    <li><a th:href="@{/workshops}" class="text-white">Lớp học Workshop</a></li>
+                    <li><a th:href="@{/blog}" class="text-white">Góc ẩm thực & Tin tức</a></li>
+                    <li><a href="#" class="text-white">Chính sách giao nhận bánh</a></li>
+                    <li><a href="#" class="text-white">Chính sách bảo mật</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <h5 class="text-white">Liên hệ HVTC</h5>
+                <ul class="list-unstyled d-flex flex-column gap-2 small text-white">
+                    <li class="text-white"><i class="fas fa-map-marker-alt text-warning me-2"></i>Số 12 Phố Lê Văn Hiến, Phường Đức Thắng, Bắc Từ Liêm, Hà Nội</li>
+                    <li class="text-white"><i class="fas fa-phone-alt text-warning me-2"></i>Hotline: <a href="tel:0964740141" class="text-white fw-bold">0964740141</a></li>
+                    <li class="text-white"><i class="fas fa-envelope text-warning me-2"></i>Email: cskh@hvtcbakery.vn</li>
+                    <li class="text-white"><i class="fas fa-clock text-warning me-2"></i>Mở cửa: 07:00 - 21:30 hàng ngày</li>
+                </ul>
+            </div>
+        </div>
+
+        <hr class="my-4 border-secondary opacity-25">
+        <div class="row align-items-center small text-white">
+            <div class="col-md-6 text-center text-md-start text-white">
+                © 2026 HVTC BAKERY. Bán bánh online cao cấp. All rights reserved.
+            </div>
+            <div class="col-md-6 text-center text-md-end mt-2 mt-md-0 text-white">
+                Thiết kế hệ thống thương mại điện tử bằng Java Spring Boot 3 & CSDL Bền Vững.
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Liên Hệ HVTC BAKERY - Đặt Bánh Theo Yêu Cầu</title>
+</head>
+<body>
+<div layout:fragment="content" class="py-5">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Contact Info -->
+            <div class="col-lg-5">
+                <div class="bg-white p-4 p-md-5 rounded-4 border shadow-sm h-100">
+                    <span class="text-primary text-uppercase font-serif fw-bold small">Kết Nối Với HVTC</span>
+                    <h3 class="fw-bold font-serif mb-4">Thông Tin Liên Hệ</h3>
+
+                    <ul class="list-unstyled d-flex flex-column gap-4 mb-4">
+                        <li class="d-flex gap-3">
+                            <div class="hvtc-icon-btn flex-shrink-0" style="background: var(--hvtc-accent-light); color: var(--hvtc-primary);">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Địa chỉ cửa hàng chính:</h6>
+                                <p class="text-muted small m-0">Số 12 Phố Lê Văn Hiến, Phường Đức Thắng, Quận Bắc Từ Liêm, Hà Nội</p>
+                            </div>
+                        </li>
+                        <li class="d-flex gap-3">
+                            <div class="hvtc-icon-btn flex-shrink-0" style="background: var(--hvtc-accent-light); color: var(--hvtc-primary);">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Hotline tư vấn đặt bánh:</h6>
+                                <p class="text-muted small m-0">0988.888.888 (07:00 - 21:30 hàng ngày)</p>
+                            </div>
+                        </li>
+                        <li class="d-flex gap-3">
+                            <div class="hvtc-icon-btn flex-shrink-0" style="background: var(--hvtc-accent-light); color: var(--hvtc-primary);">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Email chăm sóc khách hàng:</h6>
+                                <p class="text-muted small m-0">cskh@hvtcbakery.vn</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="col-lg-7">
+                <div class="bg-white p-4 p-md-5 rounded-4 border shadow-sm">
+                    <h4 class="fw-bold font-serif text-primary mb-3"><i class="far fa-paper-plane me-2"></i> Gửi Tin Nhắn Cho HVTC</h4>
+                    <p class="text-muted small mb-4">Bạn muốn đặt bánh sinh nhật thiết kế riêng hay có góp ý? Hãy gửi tin nhắn cho chúng tôi nhé!</p>
+
+                    <form th:action="@{/contact/submit}" method="post">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Họ và Tên *</label>
+                                <input type="text" name="name" class="form-control" required placeholder="Họ tên...">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Email *</label>
+                                <input type="email" name="email" class="form-control" required placeholder="Email...">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Số điện thoại</label>
+                                <input type="text" name="phone" class="form-control" placeholder="SĐT...">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Tiêu đề</label>
+                                <input type="text" name="subject" class="form-control" placeholder="Đặt bánh tiệc / Góp ý...">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold">Nội dung tin nhắn *</label>
+                            <textarea name="message" class="form-control" rows="4" required placeholder="Nội dung cần liên hệ..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-hvtc-primary px-5 py-3 fs-6">GỬI TIN NHẮN</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

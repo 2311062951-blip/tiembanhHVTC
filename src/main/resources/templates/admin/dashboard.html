@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin_base}">
+<head>
+    <title>HVTC Bakery - Admin Dashboard</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold font-serif m-0">Bảng Điều Khiển Quản Trị</h3>
+            <p class="text-muted small m-0">Tổng quan doanh thu, đơn hàng và quản lý sản phẩm bánh tươi HVTC BAKERY</p>
+        </div>
+        <span class="badge bg-primary px-3 py-2 fs-6" th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy HH:mm')}">Thời gian</span>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div>
+                    <div class="small text-muted fw-bold text-uppercase">Doanh Thu</div>
+                    <h4 class="fw-bold text-primary m-0 mt-1" th:text="${#numbers.formatDecimal(stats.totalRevenue, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</h4>
+                </div>
+                <div class="stat-icon"><i class="fas fa-coins"></i></div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div>
+                    <div class="small text-muted fw-bold text-uppercase">Tổng Đơn Hàng</div>
+                    <h4 class="fw-bold text-dark m-0 mt-1" th:text="${stats.totalOrders}">0</h4>
+                    <span class="small text-warning fw-bold" th:text="${stats.pendingOrdersCount + ' đơn chờ xác nhận'}">0</span>
+                </div>
+                <div class="stat-icon"><i class="fas fa-shopping-bag"></i></div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div>
+                    <div class="small text-muted fw-bold text-uppercase">Tổng Sản Phẩm</div>
+                    <h4 class="fw-bold text-dark m-0 mt-1" th:text="${stats.totalProducts}">0</h4>
+                    <span class="small text-danger fw-bold" th:text="${stats.lowStockProductsCount + ' sắp hết kho'}">0</span>
+                </div>
+                <div class="stat-icon"><i class="fas fa-cookie-bite"></i></div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div>
+                    <div class="small text-muted fw-bold text-uppercase">Khách Hàng</div>
+                    <h4 class="fw-bold text-dark m-0 mt-1" th:text="${stats.totalUsers}">0</h4>
+                </div>
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Orders Table -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold font-serif m-0">Đơn Hàng Mới Nhất</h5>
+            <a th:href="@{/admin/orders}" class="btn btn-sm btn-outline-primary rounded-pill">Xem tất cả đơn hàng</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle m-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Mã Đơn</th>
+                        <th>Khách Hàng</th>
+                        <th>SĐT</th>
+                        <th>Tổng Tiền</th>
+                        <th>Thanh Toán</th>
+                        <th>Trạng Thái</th>
+                        <th>Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="order : ${recentOrders}">
+                        <td class="fw-bold font-monospace text-primary" th:text="${order.orderCode}">HVTC-ORD-123</td>
+                        <td th:text="${order.customerName}">Tên KH</td>
+                        <td th:text="${order.phone}">0912345678</td>
+                        <td class="fw-bold text-dark" th:text="${#numbers.formatDecimal(order.getGrandTotal(), 0, 'COMMA', 0, 'POINT')} + 'đ'">280.000đ</td>
+                        <td>
+                            <span class="badge" th:classappend="${order.paymentStatus.name() == 'PAID' ? 'bg-success' : 'bg-secondary'}" th:text="${order.paymentStatus.displayName}">UNPAID</span>
+                        </td>
+                        <td>
+                            <span class="badge" th:classappend="${order.orderStatus.name() == 'COMPLETED' ? 'bg-success' : (order.orderStatus.name() == 'CANCELLED' ? 'bg-danger' : 'bg-warning text-dark')}" th:text="${order.orderStatus.displayName}">PENDING</span>
+                        </td>
+                        <td>
+                            <a th:href="@{'/admin/orders/' + ${order.id}}" class="btn btn-sm btn-outline-primary rounded-pill"><i class="fas fa-eye me-1"></i> Xem</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Chi Tiết Đơn Hàng - HVTC BAKERY</title>
+</head>
+<body>
+<div layout:fragment="content" class="py-5">
+    <div class="container" style="max-width: 850px;">
+        <div class="bg-white p-4 p-md-5 rounded-4 border shadow-sm">
+            <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+                <div>
+                    <h4 class="fw-bold font-serif text-primary m-0">Chi Tiết Đơn Hàng: <span class="font-monospace" th:text="${order.orderCode}">HVTC-ORD-123</span></h4>
+                    <span class="small text-muted" th:text="'Ngày đặt: ' + ${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">Ngày đặt</span>
+                </div>
+                <span class="badge fs-6" 
+                      th:classappend="${order.orderStatus.name() == 'COMPLETED' ? 'bg-success' : (order.orderStatus.name() == 'CANCELLED' ? 'bg-danger' : 'bg-warning text-dark')}"
+                      th:text="${order.orderStatus.displayName}">PENDING</span>
+            </div>
+
+            <!-- Customer & Delivery Info -->
+            <div class="row g-3 p-3 bg-light rounded-4 border mb-4 small">
+                <div class="col-md-6">
+                    <span class="text-muted d-block">Người nhận:</span>
+                    <strong th:text="${order.customerName}">Nguyễn Văn A</strong>
+                </div>
+                <div class="col-md-6">
+                    <span class="text-muted d-block">Số điện thoại:</span>
+                    <strong th:text="${order.phone}">0912345678</strong>
+                </div>
+                <div class="col-12">
+                    <span class="text-muted d-block">Địa chỉ giao bánh:</span>
+                    <strong th:text="${order.address}">Địa chỉ</strong>
+                </div>
+                <div class="col-md-6">
+                    <span class="text-muted d-block">Phương thức thanh toán:</span>
+                    <strong th:text="${order.paymentMethod.displayName}">COD</strong>
+                </div>
+                <div class="col-md-6">
+                    <span class="text-muted d-block">Trạng thái thanh toán:</span>
+                    <strong th:text="${order.paymentStatus.displayName}" th:classappend="${order.paymentStatus.name() == 'PAID' ? 'text-success' : 'text-danger'}">UNPAID</strong>
+                </div>
+            </div>
+
+            <!-- Items -->
+            <h6 class="fw-bold mb-3">Danh Sách Bánh Đã Đặt</h6>
+            <div class="table-responsive mb-4">
+                <table class="table align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Bánh</th>
+                            <th>Đơn Giá</th>
+                            <th>Số Lượng</th>
+                            <th class="text-end">Thành Tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${order.items}">
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <img th:src="${item.product.image != null ? item.product.image : 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=120'}" th:alt="${item.product.name}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 8px;">
+                                    <span class="fw-bold" th:text="${item.product.name}">Tên Bánh</span>
+                                </div>
+                            </td>
+                            <td th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</td>
+                            <td th:text="${item.quantity}">1</td>
+                            <td class="text-end fw-bold text-primary" th:text="${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Totals -->
+            <div class="d-flex justify-content-end mb-4">
+                <div style="width: 280px;" class="small">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted">Tạm tính:</span>
+                        <span class="fw-bold" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Phí giao hàng:</span>
+                        <span class="fw-bold text-success" th:text="${order.shippingFee.compareTo(T(java.math.BigDecimal).ZERO) == 0 ? 'Miễn phí' : #numbers.formatDecimal(order.shippingFee, 0, 'COMMA', 0, 'POINT') + 'đ'}">Miễn phí</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between fs-5 fw-bold">
+                        <span>Tổng tiền:</span>
+                        <span class="text-primary" th:text="${#numbers.formatDecimal(order.getGrandTotal(), 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
+                    </div>
+                </div>
+            </div>
+
+            <a th:href="@{/account/orders}" class="btn btn-outline-secondary btn-sm rounded-pill"><i class="fas fa-arrow-left me-1"></i> Quay lại lịch sử đơn hàng</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>404 Not Found - Không Tìm Thấy Trang</title>
+</head>
+<body>
+<div layout:fragment="content" class="py-5 text-center">
+    <div class="container" style="max-width: 600px;">
+        <div class="bg-white p-5 rounded-4 border shadow-sm">
+            <i class="fas fa-cookie-bite fa-5x text-warning mb-4"></i>
+            <h2 class="fw-bold font-serif mb-2">404 - KHÔNG TÌM THẤY TRANG</h2>
+            <p class="text-muted mb-4" th:text="${errorMessage != null ? errorMessage : 'Trang hoặc chiếc bánh bạn đang tìm kiếm không tồn tại hoặc đã bị gỡ bỏ.'}">Không tìm thấy trang.</p>
+            <a th:href="@{/products}" class="btn-hvtc-primary"><i class="fas fa-bread-slice me-1"></i> XEM DANH SÁCH BÁNH TƯƠI</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

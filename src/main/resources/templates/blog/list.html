@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Blog & Bí Quyết Làm Bánh - HVTC BAKERY</title>
+</head>
+<body>
+<div layout:fragment="content" class="py-5">
+    <div class="container">
+        <div class="text-center mb-5" style="max-width: 700px; margin: 0 auto;">
+            <span class="text-primary text-uppercase font-serif fw-bold small">Góc Cảm Hứng Ẩm Thực</span>
+            <h2 class="fw-bold font-serif fs-1 mt-1">Blog & Bí QuyếtHVTC</h2>
+            <p class="text-muted">Nơi chia sẻ câu chuyện nguyên liệu bánh tươi, mẹo bảo quản bánh ngọt và nguồn cảm hứng nướng ấm gia đình.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4" th:each="post : ${posts}">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+                    <img th:src="${post.image}" th:alt="${post.title}" style="height: 220px; object-fit: cover;">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <span class="small text-muted mb-2"><i class="far fa-calendar-alt me-1"></i> <span th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy')}">25/09/2026</span></span>
+                        <h5 class="fw-bold font-serif mb-2">
+                            <a th:href="@{'/blog/' + ${post.slug}}" class="text-dark text-decoration-none" th:text="${post.title}">Tiêu đề bài viết</a>
+                        </h5>
+                        <p class="small text-muted mb-4 line-clamp-3" th:text="${post.summary}">Tóm tắt nội dung...</p>
+                        <a th:href="@{'/blog/' + ${post.slug}}" class="mt-auto text-primary fw-bold small text-decoration-none">Đọc bài viết <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

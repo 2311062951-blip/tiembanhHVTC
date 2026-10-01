@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/base}">
+<head>
+    <title th:text="${workshop.name + ' - HVTC BAKERY'}">Chi Tiết Workshop</title>
+</head>
+<body>
+<div layout:fragment="content" class="py-5">
+    <div class="container" style="max-width: 950px;">
+        <div class="bg-white p-4 p-md-5 rounded-4 border shadow-sm mb-5">
+            <div class="row g-4 align-items-center mb-4">
+                <div class="col-lg-6">
+                    <img th:src="${workshop.image}" th:alt="${workshop.name}" class="img-fluid rounded-4 w-100" style="max-height: 380px; object-fit: cover;">
+                </div>
+                <div class="col-lg-6">
+                    <span class="badge bg-primary text-white mb-2">Workshop Trải Nghiệm</span>
+                    <h2 class="fw-bold font-serif mb-3" th:text="${workshop.name}">Tên Lớp Học</h2>
+                    
+                    <div class="fs-3 fw-bold text-primary mb-3" th:text="${#numbers.formatDecimal(workshop.price, 0, 'COMMA', 0, 'POINT')} + 'đ / học viên'">650.000đ</div>
+
+                    <ul class="list-unstyled text-muted small mb-4 d-flex flex-column gap-2">
+                        <li><i class="fas fa-clock text-primary me-2"></i> Thời lượng: <strong th:text="${workshop.duration}">3.5 giờ</strong></li>
+                        <li><i class="fas fa-calendar-alt text-primary me-2"></i> Khai giảng: <strong th:text="${#temporals.format(workshop.workshopDate, 'dd/MM/yyyy HH:mm')}">Thời gian</strong></li>
+                        <li><i class="fas fa-map-marker-alt text-primary me-2"></i> Địa điểm: <strong th:text="${workshop.location}">HVTC Studio</strong></li>
+                        <li><i class="fas fa-user-friends text-primary me-2"></i> Số chỗ còn nhận: <strong th:text="(${workshop.capacity} - ${workshop.registeredCount})">6</strong> chỗ</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h5 class="fw-bold font-serif border-bottom pb-2 text-primary mb-3">Giới Thiệu Nội Dung Lớp Học</h5>
+            <div class="lh-lg text-muted mb-5" th:utext="${#strings.replace(workshop.description, '&#10;', '&lt;br/&gt;')}">Mô tả...</div>
+
+            <!-- Registration Form -->
+            <div class="bg-light p-4 p-md-5 rounded-4 border">
+                <h4 class="fw-bold font-serif mb-3 text-primary"><i class="fas fa-file-signature me-2"></i> Đăng Ký Tham Gia Workshop</h4>
+                <p class="small text-muted mb-4">Điền thông tin bên dưới để giữ chỗ học làm bánh tại HVTC Studio. Chúng tôi sẽ liên hệ xác nhận trong 2h.</p>
+
+                <form th:action="@{/workshop/register}" method="post">
+                    <input type="hidden" name="workshopId" th:value="${workshop.id}">
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Họ và Tên *</label>
+                            <input type="text" name="name" class="form-control" th:value="${#authentication.name != 'anonymousUser' ? #authentication.principal.fullName : ''}" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Số điện thoại *</label>
+                            <input type="text" name="phone" class="form-control" th:value="${#authentication.name != 'anonymousUser' ? #authentication.principal.user.phone : ''}" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Email *</label>
+                            <input type="email" name="email" class="form-control" th:value="${#authentication.name != 'anonymousUser' ? #authentication.principal.email : ''}" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold">Ghi chú thêm</label>
+                        <textarea name="note" class="form-control" rows="2" placeholder="Ghi chú yêu cầu đặc biệt..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-hvtc-primary px-5 py-3 fs-6" th:disabled="${workshop.registeredCount >= workshop.capacity}">
+                        <i class="fas fa-paper-plane me-1"></i> XÁC NHẬN ĐĂNG KÝ HỌC
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

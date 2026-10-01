@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Lớp Học Làm Bánh Workshop - HVTC BAKERY</title>
+</head>
+<body>
+<div layout:fragment="content" class="py-5">
+    <div class="container">
+        <div class="text-center mb-5" style="max-width: 700px; margin: 0 auto;">
+            <span class="text-primary text-uppercase font-serif fw-bold small">HVTC Kitchen Studio</span>
+            <h2 class="fw-bold font-serif fs-1 mt-1">Lớp Học Làm Bánh Workshop</h2>
+            <p class="text-muted">Tự tay tạo nên những chiếc bánh Croissant ngàn lớp giòn thơm hay bánh kem tiệc Hàn Quốc xinh xắn cùng Chuyên gia HVTC Bakery.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4" th:each="ws : ${workshops}">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+                    <img th:src="${ws.image}" th:alt="${ws.name}" style="height: 220px; object-fit: cover;">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <span class="badge bg-primary text-white w-auto align-self-start mb-2" th:text="${ws.duration}">3 giờ</span>
+                        <h5 class="fw-bold font-serif mb-2">
+                            <a th:href="@{'/workshop/' + ${ws.slug}}" class="text-dark text-decoration-none" th:text="${ws.name}">Tên Workshop</a>
+                        </h5>
+                        <p class="small text-muted mb-3 line-clamp-2" th:text="${ws.description}">Mô tả lớp học...</p>
+                        
+                        <div class="small text-muted mb-3">
+                            <div><i class="fas fa-calendar-alt text-primary me-2"></i> Ngày học: <strong th:text="${#temporals.format(ws.workshopDate, 'dd/MM/yyyy HH:mm')}">Thời gian</strong></div>
+                            <div><i class="fas fa-users text-primary me-2"></i> Chỗ trống: <strong th:text="(${ws.capacity} - ${ws.registeredCount}) + ' / ' + ${ws.capacity}">8 / 12</strong></div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-auto pt-3 border-top">
+                            <span class="fw-bold text-primary fs-5" th:text="${#numbers.formatDecimal(ws.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">650.000đ</span>
+                            <a th:href="@{'/workshop/' + ${ws.slug}}" class="btn-hvtc-primary btn-sm">Xem & Đăng ký</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

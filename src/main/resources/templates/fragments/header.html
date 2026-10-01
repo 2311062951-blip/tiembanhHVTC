@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<header th:fragment="header" class="hvtc-header">
+    <div class="container py-2">
+        <div class="row align-items-center">
+            <!-- Logo -->
+            <div class="col-6 col-lg-3">
+                <a th:href="@{/}" class="hvtc-logo-text">
+                    HVTC <span>BAKERY</span>
+                </a>
+            </div>
+
+            <!-- Main Nav (Desktop) -->
+            <div class="col-lg-6 d-none d-lg-block">
+                <ul class="nav justify-content-center">
+                    <li class="nav-item">
+                        <a th:href="@{/}" class="nav-link" th:classappend="${activeMenu == 'home'} ? 'active' : ''">Trang chủ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/products}" class="nav-link" th:classappend="${activeMenu == 'products'} ? 'active' : ''">Sản phẩm</a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/workshops}" class="nav-link" th:classappend="${activeMenu == 'workshop'} ? 'active' : ''">Workshop</a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/blog}" class="nav-link" th:classappend="${activeMenu == 'blog'} ? 'active' : ''">Blog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/about}" class="nav-link" th:classappend="${activeMenu == 'about'} ? 'active' : ''">Giới thiệu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/contact}" class="nav-link" th:classappend="${activeMenu == 'contact'} ? 'active' : ''">Liên hệ</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Search, Account, Favorites, Cart -->
+            <div class="col-6 col-lg-3 d-flex align-items-center justify-content-end gap-2">
+                <!-- Search Form -->
+                <form th:action="@{/search}" method="get" class="d-none d-md-block position-relative" style="width: 180px;">
+                    <input type="text" name="keyword" th:value="${keyword}" class="form-control hvtc-search-input" placeholder="Tìm bánh tươi...">
+                    <button type="submit" class="hvtc-search-btn"><i class="fas fa-search"></i></button>
+                </form>
+
+                <!-- Account -->
+                <div class="dropdown">
+                    <a href="#" class="hvtc-icon-btn" id="accountDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Tài khoản">
+                        <i class="fas fa-user"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" aria-labelledby="accountDropdown">
+                        <li sec:authorize="isAnonymous()">
+                            <a class="dropdown-menu-item dropdown-item" th:href="@{/login}"><i class="fas fa-sign-in-alt me-2"></i>Đăng nhập</a>
+                        </li>
+                        <li sec:authorize="isAnonymous()">
+                            <a class="dropdown-menu-item dropdown-item" th:href="@{/register}"><i class="fas fa-user-plus me-2"></i>Đăng ký</a>
+                        </li>
+
+                        <li sec:authorize="isAuthenticated()">
+                            <div class="dropdown-header fw-bold text-truncate" style="max-width: 200px;" sec:authentication="principal.fullName">User</div>
+                        </li>
+                        <li sec:authorize="hasRole('ADMIN')">
+                            <a class="dropdown-item text-primary fw-bold" th:href="@{/admin}"><i class="fas fa-user-shield me-2"></i>Trang Quản Trị (Admin)</a>
+                        </li>
+                        <li sec:authorize="isAuthenticated()">
+                            <a class="dropdown-item" th:href="@{/account/profile}"><i class="fas fa-id-card me-2"></i>Hồ sơ cá nhân</a>
+                        </li>
+                        <li sec:authorize="isAuthenticated()">
+                            <a class="dropdown-item" th:href="@{/account/orders}"><i class="fas fa-box me-2"></i>Lịch sử đơn hàng</a>
+                        </li>
+                        <li sec:authorize="isAuthenticated()">
+                            <a class="dropdown-item" th:href="@{/account/favorites}"><i class="fas fa-heart me-2"></i>Bánh yêu thích</a>
+                        </li>
+                        <li sec:authorize="isAuthenticated()"><hr class="dropdown-divider"></li>
+                        <li sec:authorize="isAuthenticated()">
+                            <form th:action="@{/logout}" method="post" class="m-0">
+                                <button type="submit" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Favorites -->
+                <a th:href="@{/account/favorites}" class="hvtc-icon-btn" title="Yêu thích">
+                    <i class="far fa-heart"></i>
+                </a>
+
+                <!-- Cart -->
+                <a th:href="@{/cart}" class="hvtc-icon-btn" title="Giỏ hàng">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="hvtc-badge" th:text="${session.cartCount != null ? session.cartCount : 0}">0</span>
+                </a>
+
+                <!-- Mobile Menu Button -->
+                <button class="btn d-lg-none p-0 ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+                    <i class="fas fa-bars fa-lg text-dark"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Offcanvas Menu -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu">
+        <div class="offcanvas-header border-bottom">
+            <h5 class="offcanvas-title font-serif fw-bold text-primary">HVTC BAKERY</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <form th:action="@{/search}" method="get" class="mb-4 position-relative">
+                <input type="text" name="keyword" th:value="${keyword}" class="form-control hvtc-search-input" placeholder="Tìm bánh tươi...">
+                <button type="submit" class="hvtc-search-btn"><i class="fas fa-search"></i></button>
+            </form>
+            <ul class="nav flex-column gap-2">
+                <li class="nav-item"><a th:href="@{/}" class="nav-link">Trang chủ</a></li>
+                <li class="nav-item"><a th:href="@{/products}" class="nav-link">Tất cả sản phẩm</a></li>
+                <li class="nav-item"><a th:href="@{/workshops}" class="nav-link">Workshop làm bánh</a></li>
+                <li class="nav-item"><a th:href="@{/blog}" class="nav-link">Blog & Bí quyết</a></li>
+                <li class="nav-item"><a th:href="@{/about}" class="nav-link">Giới thiệu HVTC</a></li>
+                <li class="nav-item"><a th:href="@{/contact}" class="nav-link">Liên hệ</a></li>
+            </ul>
+        </div>
+    </div>
+</header>
+</body>
+</html>

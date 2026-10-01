@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Đăng Ký Tài Khoản - HVTC BAKERY</title>
+</head>
+<body>
+<div layout:fragment="content" class="py-5">
+    <div class="container" style="max-width: 540px;">
+        <div class="bg-white p-4 p-md-5 rounded-4 border shadow-sm">
+            <div class="text-center mb-4">
+                <h3 class="fw-bold font-serif text-primary m-0">ĐĂNG KÝ TÀI KHOẢN</h3>
+                <p class="text-muted small">Tạo tài khoản để trải nghiệm đặt bánh nhanh và nhận ưu đãi</p>
+            </div>
+
+            <form th:action="@{/register}" th:object="${registerDto}" method="post">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Tên đăng nhập *</label>
+                    <input type="text" th:field="*{username}" class="form-control" th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''" placeholder="Nhập tên đăng nhập..." required>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Lỗi tên đăng nhập</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Họ và Tên *</label>
+                    <input type="text" th:field="*{fullName}" class="form-control" th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid' : ''" placeholder="Ví dụ: Nguyễn Văn An" required>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">Lỗi họ tên</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Địa chỉ Email *</label>
+                    <input type="email" th:field="*{email}" class="form-control" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''" placeholder="Ví dụ: yourname@gmail.com" required>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Lỗi email</div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">Mật khẩu *</label>
+                        <input type="password" th:field="*{password}" class="form-control" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''" placeholder="Mật khẩu..." required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Lỗi mật khẩu</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">Xác nhận mật khẩu *</label>
+                        <input type="password" th:field="*{confirmPassword}" class="form-control" th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid' : ''" placeholder="Nhập lại mật khẩu..." required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}">Lỗi xác nhận</div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Số điện thoại</label>
+                    <input type="text" th:field="*{phone}" class="form-control" placeholder="09xxxxxxxx">
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label small fw-bold">Địa chỉ giao nhận bánh</label>
+                    <input type="text" th:field="*{address}" class="form-control" placeholder="Số nhà, phố, quận...">
+                </div>
+
+                <button type="submit" class="btn-hvtc-primary w-100 justify-content-center py-2 fs-6 mb-3">
+                    <i class="fas fa-user-plus me-1"></i> TẠO TÀI KHOẢN
+                </button>
+            </form>
+
+            <div class="text-center small text-muted pt-3 border-top">
+                Đã có tài khoản HVTC Bakery? <a th:href="@{/login}" class="fw-bold text-primary text-decoration-none">Đăng nhập</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

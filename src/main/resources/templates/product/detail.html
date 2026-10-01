@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/base}">
+<head>
+    <title th:text="${product.name + ' - HVTC BAKERY'}">Chi Tiết Bánh</title>
+</head>
+<body>
+<div layout:fragment="content" class="py-5">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb small">
+                <li class="breadcrumb-item"><a th:href="@{/}" class="text-muted text-decoration-none">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/products}" class="text-muted text-decoration-none">Sản phẩm</a></li>
+                <li class="breadcrumb-item"><a th:href="@{'/category/' + ${product.category.slug}}" class="text-muted text-decoration-none" th:text="${product.category.name}">Category</a></li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="${product.name}">Product</li>
+            </ol>
+        </nav>
+
+        <div class="row g-5 bg-white p-4 p-md-5 rounded-4 border shadow-sm mb-5">
+            <!-- Left: Image Gallery -->
+            <div class="col-lg-6">
+                <div class="position-relative rounded-4 overflow-hidden border">
+                    <img th:src="${product.image != null ? product.image : 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800'}" th:alt="${product.name}" class="img-fluid w-100" style="max-height: 480px; object-fit: cover;">
+                </div>
+            </div>
+
+            <!-- Right: Product Info -->
+            <div class="col-lg-6">
+                <span class="badge bg-primary text-white mb-2" th:text="${product.category.name}">Danh mục</span>
+                <h1 class="fw-bold font-serif mb-2" th:text="${product.name}">Tên Bánh</h1>
+
+                <!-- Rating -->
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <div class="text-warning">
+                        <i class="fas fa-star" th:each="i : ${#numbers.sequence(1, 5)}" th:classappend="${i <= avgRating} ? 'text-warning' : 'text-muted opacity-25'"></i>
+                    </div>
+                    <span class="fw-bold small" th:text="${avgRating}">5.0</span>
+                    <span class="text-muted small" th:text="'(' + ${reviewCount} + ' đánh giá)'">(0 đánh giá)</span>
+                </div>
+
+                <!-- Price -->
+                <div class="d-flex align-items-baseline gap-3 mb-4">
+                    <h2 class="fw-bold text-primary fs-1 m-0" th:text="${#numbers.formatDecimal(product.getEffectivePrice(), 0, 'COMMA', 0, 'POINT')} + 'đ'">250.000đ</h2>
+                    <span th:if="${product.isOnSale()}" class="text-muted text-decoration-line-through fs-5" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">280.000đ</span>
+                    <span th:if="${product.isOnSale()}" class="badge bg-danger">Tiết kiệm!</span>
+                </div>
+
+                <!-- Stock Status -->
+                <div class="mb-4">
+                    <span class="small fw-bold">Tình trạng kho: </span>
+                    <span th:if="${product.stockQuantity > 0}" class="badge bg-success-subtle text-success border border-success"><i class="fas fa-check me-1"></i> Còn bánh (<span th:text="${product.stockQuantity}">10</span> bánh)</span>
+                    <span th:if="${product.stockQuantity <= 0}" class="badge bg-danger-subtle text-danger border border-danger"><i class="fas fa-times me-1"></i> Tạm hết bánh</span>
+                </div>
+
+                <!-- Short Desc -->
+                <p class="text-muted mb-4" th:text="${product.shortDescription}">Mô tả ngắn về sản phẩm bánh tươi thơm ngậy bơ Pháp và matcha Uji cao cấp...</p>
+
+                <!-- Actions -->
+                <form th:action="@{/cart/add}" method="post" class="mb-4">
+                    <input type="hidden" name="productId" th:value="${product.id}">
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <label class="fw-bold small me-2">Số lượng:</label>
+                        <div class="input-group" style="width: 140px;">
+                            <button type="button" class="btn btn-outline-secondary" onclick="this.nextElementSibling.stepDown()"><i class="fas fa-minus"></i></button>
+                            <input type="number" name="quantity" value="1" min="1" th:max="${product.stockQuantity}" class="form-control text-center fw-bold">
+                            <button type="button" class="btn btn-outline-secondary" onclick="this.previousElementSibling.stepUp()"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-3">
+                        <button type="submit" class="btn-hvtc-primary flex-grow-1" th:disabled="${product.stockQuantity <= 0}">
+                            <i class="fas fa-cart-plus me-1"></i> THÊM VÀO GIỎ
+                        </button>
+                        <button type="submit" name="buyNow" value="true" class="btn btn-warning rounded-pill fw-bold px-4" th:disabled="${product.stockQuantity <= 0}">
+                            MUA NGAY
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Favorite Button -->
+                <div class="border-top pt-3">
+                    <form th:action="${isFavorite} ? @{'/favorites/remove/' + ${product.id}} : @{'/favorites/add/' + ${product.id}}" method="post">
+                        <button type="submit" class="btn btn-link text-decoration-none p-0 text-muted small">
+                            <i class="fas fa-heart me-1" th:classappend="${isFavorite} ? 'text-danger' : ''"></i>
+                            <span th:text="${isFavorite} ? 'Đã yêu thích (Bấm để bỏ)' : 'Thêm vào sản phẩm yêu thích'">Thêm vào yêu thích</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detail Tabs & Reviews -->
+        <div class="bg-white p-4 p-md-5 rounded-4 border shadow-sm mb-5">
+            <ul class="nav nav-tabs border-bottom mb-4" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active fw-bold text-dark" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc" type="button">Mô Tả Bánh</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-bold text-dark" id="ingr-tab" data-bs-toggle="tab" data-bs-target="#ingr" type="button">Thành Phần & Bảo Quản</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-bold text-dark" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button">Đánh Giá (<span th:text="${reviewCount}">0</span>)</button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="desc" role="tabpanel">
+                    <div class="lh-lg" th:utext="${#strings.replace(product.description, '&#10;', '&lt;br/&gt;')}">Nội dung chi tiết...</div>
+                </div>
+                <div class="tab-pane fade" id="ingr" role="tabpanel">
+                    <h6 class="fw-bold text-primary mb-2"><i class="fas fa-leaf me-2"></i> Thành phần chính:</h6>
+                    <p class="text-muted">Bơ Elle & Vire Pháp, Bột mì Nhật Bản cao cấp, Trứng gà sạch vi sinh, Kem tươi Hokkaido, Trà xanh Uji/Socola 70% cacao (tùy dòng bánh).</p>
+                    <h6 class="fw-bold text-primary mb-2 mt-4"><i class="fas fa-temperature-low me-2"></i> Hướng dẫn bảo quản:</h6>
+                    <p class="text-muted mb-0">Bảo quản ở nhiệt độ 2 - 6°C trong ngăn mát tủ lạnh. Dùng ngon nhất trong vòng 24 đến 48 giờ sau khi mở hộp.</p>
+                </div>
+                <div class="tab-pane fade" id="reviews" role="tabpanel">
+                    <!-- Review List -->
+                    <div class="mb-4" th:if="${reviews != null and not #lists.isEmpty(reviews)}">
+                        <div class="border-bottom pb-3 mb-3" th:each="rev : ${reviews}">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="fw-bold" th:text="${rev.user.fullName}">Tên khách hàng</span>
+                                <span class="small text-muted" th:text="${#temporals.format(rev.createdAt, 'dd/MM/yyyy HH:mm')}">Thời gian</span>
+                            </div>
+                            <div class="text-warning small mb-2">
+                                <i class="fas fa-star" th:each="i : ${#numbers.sequence(1, 5)}" th:classappend="${i <= rev.rating} ? 'text-warning' : 'text-muted opacity-25'"></i>
+                            </div>
+                            <p class="m-0 text-muted" th:text="${rev.comment}">Nội dung đánh giá</p>
+                        </div>
+                    </div>
+
+                    <div th:if="${reviews == null or #lists.isEmpty(reviews)}" class="text-muted small mb-4">
+                        Chưa có đánh giá nào cho sản phẩm bánh này. Hãy là người đầu tiên thưởng thức và chia sẻ cảm nhận nhé!
+                    </div>
+
+                    <!-- Add Review Form -->
+                    <div class="bg-light p-4 rounded-4" sec:authorize="isAuthenticated()">
+                        <h6 class="fw-bold mb-3">Viết Đánh Giá Của Bạn</h6>
+                        <form th:action="@{/review/add}" method="post">
+                            <input type="hidden" name="productId" th:value="${product.id}">
+                            <div class="mb-3">
+                                <label class="small fw-bold mb-1">Số sao đánh giá:</label>
+                                <select name="rating" class="form-select form-select-sm" style="max-width: 150px;">
+                                    <option value="5">⭐⭐⭐⭐⭐ (5 sao - Tuyệt vời)</option>
+                                    <option value="4">⭐⭐⭐⭐ (4 sao - Rất ngon)</option>
+                                    <option value="3">⭐⭐⭐ (3 sao - Khá)</option>
+                                    <option value="2">⭐⭐ (2 sao - Trung bình)</option>
+                                    <option value="1">⭐ (1 sao - Chưa hài lòng)</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <textarea name="comment" class="form-control form-control-sm" rows="3" placeholder="Chia sẻ cảm nhận của bạn về hương vị chiếc bánh này..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm rounded-pill px-4">Gửi Đánh Giá</button>
+                        </form>
+                    </div>
+                    <div sec:authorize="isAnonymous()" class="text-center p-3 bg-light rounded-4">
+                        Vui lòng <a th:href="@{/login}" class="fw-bold text-primary">Đăng nhập</a> để viết đánh giá cho chiếc bánh này.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Products -->
+        <div th:if="${relatedProducts != null and not #lists.isEmpty(relatedProducts)}">
+            <h4 class="fw-bold font-serif mb-4">Sản Phẩm Cùng Danh Mục</h4>
+            <div class="row g-4">
+                <div class="col-6 col-md-3" th:each="rel : ${relatedProducts}">
+                    <div class="hvtc-product-card">
+                        <a th:href="@{'/product/' + ${rel.slug}}" class="hvtc-product-img-wrap">
+                            <img th:src="${rel.image != null ? rel.image : 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600'}" th:alt="${rel.name}" class="hvtc-product-img">
+                        </a>
+                        <div class="hvtc-product-body">
+                            <a th:href="@{'/product/' + ${rel.slug}}" class="hvtc-product-title" th:text="${rel.name}">Bánh liên quan</a>
+                            <div class="hvtc-product-price">
+                                <span class="price-current" th:text="${#numbers.formatDecimal(rel.getEffectivePrice(), 0, 'COMMA', 0, 'POINT')} + 'đ'">250.000đ</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

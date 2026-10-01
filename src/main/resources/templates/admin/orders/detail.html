@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin_base}">
+<head>
+    <title>Chi Tiết Đơn Hàng - HVTC Admin</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold font-serif m-0">Chi Tiết Đơn Hàng: <span class="font-monospace text-primary" th:text="${order.orderCode}">HVTC-ORD-123</span></h3>
+        <a th:href="@{/admin/orders}" class="btn btn-outline-secondary rounded-pill"><i class="fas fa-arrow-left me-1"></i> Quay lại</a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Details & Items -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                <h5 class="fw-bold font-serif text-primary border-bottom pb-2 mb-3">Thông Tin Đơn Hàng</h5>
+                
+                <div class="row g-3 small mb-3">
+                    <div class="col-md-6">
+                        <span class="text-muted d-block">Khách hàng:</span>
+                        <strong th:text="${order.customerName}">Name</strong>
+                    </div>
+                    <div class="col-md-6">
+                        <span class="text-muted d-block">Số điện thoại:</span>
+                        <strong th:text="${order.phone}">Phone</strong>
+                    </div>
+                    <div class="col-md-6">
+                        <span class="text-muted d-block">Email:</span>
+                        <strong th:text="${order.email}">Email</strong>
+                    </div>
+                    <div class="col-md-6">
+                        <span class="text-muted d-block">Ngày đặt:</span>
+                        <strong th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">Date</strong>
+                    </div>
+                    <div class="col-12">
+                        <span class="text-muted d-block">Địa chỉ nhận bánh:</span>
+                        <strong th:text="${order.address}">Address</strong>
+                    </div>
+                    <div class="col-12" th:if="${order.note != null and !order.note.isBlank()}">
+                        <span class="text-muted d-block">Ghi chú:</span>
+                        <span class="fst-italic bg-light p-2 rounded d-block" th:text="${order.note}">Note</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Items -->
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-white py-3">
+                    <h5 class="fw-bold font-serif m-0">Sản Phẩm Đã Đặt</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table align-middle m-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Bánh</th>
+                                <th>Giá</th>
+                                <th>Số Lượng</th>
+                                <th class="text-end">Thành Tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${order.items}">
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img th:src="${item.product.image != null ? item.product.image : 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=120'}" th:alt="${item.product.name}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 8px;">
+                                        <span class="fw-bold" th:text="${item.product.name}">Product</span>
+                                    </div>
+                                </td>
+                                <td th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</td>
+                                <td th:text="${item.quantity}">1</td>
+                                <td class="text-end fw-bold text-primary" th:text="${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Update Status Box -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <h5 class="fw-bold font-serif text-primary border-bottom pb-2 mb-3">Cập Nhật Trạng Thái</h5>
+
+                <form th:action="@{'/admin/orders/' + ${order.id} + '/update-status'}" method="post">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Trạng Thái Đơn Hàng</label>
+                        <select name="orderStatus" class="form-select">
+                            <option th:each="s : ${allOrderStatuses}" th:value="${s}" th:text="${s.displayName}" th:selected="${order.orderStatus == s}">Status</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold">Trạng Thái Thanh Toán</label>
+                        <select name="paymentStatus" class="form-select">
+                            <option th:each="ps : ${allPaymentStatuses}" th:value="${ps}" th:text="${ps.displayName}" th:selected="${order.paymentStatus == ps}">Payment Status</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill"><i class="fas fa-save me-1"></i> CẬP NHẬT TRẠNG THÁI</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

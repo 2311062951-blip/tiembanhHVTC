@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Lịch Sử Đơn Hàng - HVTC BAKERY</title>
+</head>
+<body>
+<div layout:fragment="content" class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Sidebar -->
+            <div class="col-lg-3">
+                <div class="bg-white p-4 rounded-4 border shadow-sm">
+                    <div class="text-center mb-4 pb-3 border-bottom">
+                        <div class="hvtc-icon-btn mx-auto mb-2" style="width:60px; height:60px; font-size:1.5rem; background: var(--hvtc-accent-light); color: var(--hvtc-primary);">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h6 class="fw-bold m-0" th:text="${user.fullName}">Tên khách hàng</h6>
+                        <span class="small text-muted" th:text="${user.email}">Email</span>
+                    </div>
+
+                    <div class="list-group list-group-flush">
+                        <a th:href="@{/account/profile}" class="list-group-item list-group-item-action border-0 px-3 py-2 rounded-3 mb-1"><i class="fas fa-id-card me-2"></i> Thông tin cá nhân</a>
+                        <a th:href="@{/account/orders}" class="list-group-item list-group-item-action border-0 px-3 py-2 rounded-3 mb-1 bg-primary text-white fw-bold"><i class="fas fa-box me-2"></i> Lịch sử đơn hàng</a>
+                        <a th:href="@{/account/favorites}" class="list-group-item list-group-item-action border-0 px-3 py-2 rounded-3 mb-1"><i class="fas fa-heart me-2"></i> Bánh yêu thích</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="col-lg-9">
+                <div class="bg-white p-4 p-md-5 rounded-4 border shadow-sm">
+                    <h4 class="fw-bold font-serif mb-4 border-bottom pb-3 text-primary">Lịch Sử Đặt Bánh Của Bạn</h4>
+
+                    <div th:if="${orders == null or #lists.isEmpty(orders)}" class="text-center py-5">
+                        <i class="fas fa-box-open fa-3x text-muted opacity-50 mb-3"></i>
+                        <h6>Bạn chưa có đơn hàng đặt bánh nào</h6>
+                        <a th:href="@{/products}" class="btn btn-outline-primary btn-sm rounded-pill mt-2">Đặt bánh ngay</a>
+                    </div>
+
+                    <div class="table-responsive" th:if="${orders != null and not #lists.isEmpty(orders)}">
+                        <table class="table align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Mã Đơn Hàng</th>
+                                    <th>Ngày Đặt</th>
+                                    <th>Tổng Tiền</th>
+                                    <th>Trạng Thái</th>
+                                    <th>Hành Động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="order : ${orders}">
+                                    <td class="fw-bold font-monospace text-primary" th:text="${order.orderCode}">HVTC-ORD-123</td>
+                                    <td class="small" th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">25/09/2026</td>
+                                    <td class="fw-bold" th:text="${#numbers.formatDecimal(order.getGrandTotal(), 0, 'COMMA', 0, 'POINT')} + 'đ'">280.000đ</td>
+                                    <td>
+                                        <span class="badge" 
+                                              th:classappend="${order.orderStatus.name() == 'COMPLETED' ? 'bg-success' : (order.orderStatus.name() == 'CANCELLED' ? 'bg-danger' : 'bg-warning text-dark')}"
+                                              th:text="${order.orderStatus.displayName}">PENDING</span>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{'/account/order/' + ${order.orderCode}}" class="btn btn-sm btn-outline-primary rounded-pill">Chi tiết</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
