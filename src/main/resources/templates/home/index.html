@@ -277,12 +277,35 @@
             <i class="far fa-paper-plane fa-3x text-primary mb-3"></i>
             <h3 class="fw-bold mb-2">Đăng Ký Nhận Ưu Đãi Bánh Tươi</h3>
             <p class="text-muted small mb-4">Nhập email của bạn để nhận mã giảm giá 10% cho đơn hàng đặt bánh đầu tiên tại HVTC BAKERY!</p>
-            <form class="d-flex gap-2">
-                <input type="email" class="form-control form-control-lg rounded-pill px-4" placeholder="Nhập địa chỉ email của bạn..." required>
+            <form id="newsletterForm" class="d-flex gap-2">
+                <input type="email" id="newsletterEmail" class="form-control form-control-lg rounded-pill px-4" placeholder="Nhập địa chỉ email của bạn..." required>
                 <button type="submit" class="btn btn-hvtc-primary px-4 flex-shrink-0">ĐĂNG KÝ</button>
             </form>
         </div>
     </section>
+
+    <script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        const newsletterForm = document.getElementById('newsletterForm');
+        if (!newsletterForm) return;
+
+        const isAuthenticated = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
+
+        newsletterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (isAuthenticated) {
+                alert("Bạn đã là thành viên của HVTC BAKERY!");
+            } else {
+                const emailInput = document.getElementById('newsletterEmail');
+                const emailValue = emailInput ? emailInput.value.trim() : '';
+                if (emailValue) {
+                    window.location.href = '/register?email=' + encodeURIComponent(emailValue);
+                }
+            }
+        });
+    });
+    </script>
 
 </div>
 </body>

@@ -20,4 +20,5 @@ public interface OrderService {
     Order updateOrderStatus(Long orderId, OrderStatus status, PaymentStatus paymentStatus);
     DashboardStatsDto getDashboardStats();
     List<Order> findRecentOrders();
+    void deleteAllOrders();
 }

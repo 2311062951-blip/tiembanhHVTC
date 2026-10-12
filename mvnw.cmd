@@ -39,7 +39,7 @@ if exist %WRAPPER_JAR% goto run
 echo Could not find %WRAPPER_JAR%, trying fallback or standard mvn.
 
 :run
-java -cp %WRAPPER_JAR% %WRAPPER_LAUNCHER% %*
+java "-Dmaven.multiModuleProjectDirectory=%MAVEN_PROJECT_BASEDIR%" -cp %WRAPPER_JAR% %WRAPPER_LAUNCHER% %*
 if ERRORLEVEL 1 goto error
 goto end
 

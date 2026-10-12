@@ -19,6 +19,9 @@
             <li class="admin-menu-item" th:classappend="${activeAdminMenu == 'dashboard'} ? 'active' : ''">
                 <a th:href="@{/admin}"><i class="fas fa-chart-line"></i> Dashboard</a>
             </li>
+            <li class="admin-menu-item" th:classappend="${activeAdminMenu == 'revenue'} ? 'active' : ''">
+                <a th:href="@{/admin/revenue}"><i class="fas fa-coins"></i> Quản lý Doanh Thu</a>
+            </li>
             <li class="admin-menu-item" th:classappend="${activeAdminMenu == 'products'} ? 'active' : ''">
                 <a th:href="@{/admin/products}"><i class="fas fa-cookie-bite"></i> Quản lý Sản Phẩm</a>
             </li>
@@ -39,6 +42,9 @@
             </li>
             <li class="admin-menu-item" th:classappend="${activeAdminMenu == 'reviews'} ? 'active' : ''">
                 <a th:href="@{/admin/reviews}"><i class="fas fa-star"></i> Quản lý Đánh Giá</a>
+            </li>
+            <li class="admin-menu-item" th:classappend="${activeAdminMenu == 'coupons'} ? 'active' : ''">
+                <a th:href="@{/admin/coupons}"><i class="fas fa-ticket-alt"></i> Quản lý Mã Giảm Giá</a>
             </li>
             <li class="admin-menu-item mt-4">
                 <a th:href="@{/}" target="_blank" class="text-info"><i class="fas fa-external-link-alt"></i> Xem Website</a>

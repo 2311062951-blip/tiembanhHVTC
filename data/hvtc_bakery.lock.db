@@ -1,6 +1,6 @@
 #FileLock
-#Thu Oct 01 16:44:43 ICT 2026
+#Sat Oct 10 09:11:51 ICT 2026
 hostName=Cuonglee
-id=1a0f6da042e4aa2aa83cbb4dd8eea9628cdf90348d0
+id=1a12394a3409d9fd61b20613beea466b8f4e377a079
 method=file
-server=192.168.56.1\:41375
+server=192.168.56.1\:21242

@@ -62,4 +62,15 @@ public class AdminOrderController {
         }
         return "redirect:/admin/orders/" + id;
     }
+
+    @PostMapping("/delete-all")
+    public String deleteAllOrders(RedirectAttributes redirectAttributes) {
+        try {
+            orderService.deleteAllOrders();
+            redirectAttributes.addFlashAttribute("successMessage", "Đã xóa toàn bộ lịch sử đơn hàng!");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+        }
+        return "redirect:/admin/orders";
+    }
 }

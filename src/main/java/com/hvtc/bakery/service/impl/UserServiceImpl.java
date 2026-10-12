@@ -18,13 +18,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.hvtc.bakery.service.EmailService;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     @Transactional
@@ -58,7 +66,16 @@ public class UserServiceImpl implements UserService {
                 .roles(roles)
                 .build();
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        // Gửi email chào mừng kèm mã giảm giá (bọc try-catch không làm hỏng giao dịch tạo tài khoản)
+        try {
+            emailService.sendWelcomeEmail(savedUser.getEmail(), savedUser.getFullName());
+        } catch (Exception ex) {
+            log.error("Không thể gửi email chào mừng cho tài khoản mới {}: {}", savedUser.getUsername(), ex.getMessage());
+        }
+
+        return savedUser;
     }
 
     @Override
@@ -160,6 +177,19 @@ public class UserServiceImpl implements UserService {
             if (adminCount <= 1) {
                 throw new BadRequestException("Không thể xóa tài khoản Quản trị viên (Admin) duy nhất trong hệ thống!");
             }
+        }
+
+        try {
+            // Dọn dẹp tất cả ràng buộc khóa ngoại trước khi xóa tài khoản người dùng
+            jdbcTemplate.update("DELETE FROM cart_items WHERE cart_id IN (SELECT id FROM carts WHERE user_id = ?)", userId);
+            jdbcTemplate.update("DELETE FROM carts WHERE user_id = ?", userId);
+            jdbcTemplate.update("DELETE FROM favorites WHERE user_id = ?", userId);
+            jdbcTemplate.update("UPDATE reviews SET user_id = NULL WHERE user_id = ?", userId);
+            jdbcTemplate.update("UPDATE workshop_registrations SET user_id = NULL WHERE user_id = ?", userId);
+            jdbcTemplate.update("UPDATE orders SET user_id = NULL WHERE user_id = ?", userId);
+            jdbcTemplate.update("DELETE FROM user_roles WHERE user_id = ?", userId);
+        } catch (Exception ex) {
+            log.warn("Lỗi dọn dẹp dữ liệu liên quan khi xóa người dùng ID {}: {}", userId, ex.getMessage());
         }
 
         userRepository.delete(user);

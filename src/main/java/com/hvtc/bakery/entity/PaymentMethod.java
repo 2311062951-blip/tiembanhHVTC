@@ -2,7 +2,8 @@ package com.hvtc.bakery.entity;
 
 public enum PaymentMethod {
     COD("Thanh toán khi nhận hàng (COD)"),
-    BANK_TRANSFER("Chuyển khoản ngân hàng");
+    BANK_TRANSFER("Chuyển khoản ngân hàng"),
+    PAYOS("Thanh toán Cổng PayOS");
 
     private final String displayName;
 

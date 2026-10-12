@@ -65,8 +65,8 @@
                             <tr th:each="item : ${order.items}">
                                 <td>
                                     <div class="d-flex align-items-center gap-3">
-                                        <img th:src="${item.product.image != null ? item.product.image : 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=120'}" th:alt="${item.product.name}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 8px;">
-                                        <span class="fw-bold" th:text="${item.product.name}">Product</span>
+                                        <img th:src="${item.product != null and item.product.image != null ? item.product.image : 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=120'}" th:alt="${item.product != null ? item.product.name : 'Sản phẩm'}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 8px;">
+                                        <span class="fw-bold" th:text="${item.product != null ? item.product.name : 'Sản phẩm đã bị xóa'}">Product</span>
                                     </div>
                                 </td>
                                 <td th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</td>
@@ -75,6 +75,23 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+                <div class="card-footer bg-white p-3 border-top d-flex justify-content-end">
+                    <div style="width: 280px;" class="small">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Tạm tính:</span>
+                            <span class="fw-bold" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
+                        </div>
+                        <div th:if="${order.discountAmount != null and order.discountAmount.compareTo(T(java.math.BigDecimal).ZERO) > 0}" class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Giảm giá (<span th:text="${order.couponCode}">HVTC</span>):</span>
+                            <span class="fw-bold text-success" th:text="'-' + ${#numbers.formatDecimal(order.discountAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'">-0đ</span>
+                        </div>
+                        <hr class="my-2">
+                        <div class="d-flex justify-content-between fs-5 fw-bold">
+                            <span>Tổng tiền:</span>
+                            <span class="text-primary" th:text="${#numbers.formatDecimal(order.getGrandTotal(), 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

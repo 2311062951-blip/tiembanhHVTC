@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin_base}">
+<head>
+    <title>Quản Lý Doanh Thu & Thống Kê - HVTC Admin</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <!-- Header & Filter Bar -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <h3 class="fw-bold font-serif m-0 text-dark"><i class="fas fa-chart-line text-primary me-2"></i> Báo Cáo & Quản Lý Doanh Thu</h3>
+            <p class="text-muted small m-0">Theo dõi doanh thu, phân tích xu hướng đơn hàng và top sản phẩm bán chạy</p>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-light text-secondary border px-3 py-2 fs-6">
+                <i class="far fa-calendar-alt me-1 text-primary"></i> 
+                <span th:text="${#temporals.format(report.startDate, 'dd/MM/yyyy')}">01/10/2026</span> - 
+                <span th:text="${#temporals.format(report.endDate, 'dd/MM/yyyy')}">30/10/2026</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- Filter Control Card -->
+    <div class="card border-0 shadow-sm rounded-4 p-3 mb-4 bg-white">
+        <form th:action="@{/admin/revenue}" method="get" class="row g-3 align-items-center">
+            <!-- Preset Buttons -->
+            <div class="col-lg-6 d-flex flex-wrap gap-2">
+                <a th:href="@{/admin/revenue(period='today')}" 
+                   class="btn btn-sm rounded-pill px-3"
+                   th:classappend="${report.selectedPeriod == 'today'} ? 'btn-primary' : 'btn-outline-secondary'">
+                    Hôm nay
+                </a>
+                <a th:href="@{/admin/revenue(period='7days')}" 
+                   class="btn btn-sm rounded-pill px-3"
+                   th:classappend="${report.selectedPeriod == '7days'} ? 'btn-primary' : 'btn-outline-secondary'">
+                    7 ngày qua
+                </a>
+                <a th:href="@{/admin/revenue(period='30days')}" 
+                   class="btn btn-sm rounded-pill px-3"
+                   th:classappend="${report.selectedPeriod == '30days'} ? 'btn-primary' : 'btn-outline-secondary'">
+                    30 ngày qua
+                </a>
+                <a th:href="@{/admin/revenue(period='thisMonth')}" 
+                   class="btn btn-sm rounded-pill px-3"
+                   th:classappend="${report.selectedPeriod == 'thisMonth'} ? 'btn-primary' : 'btn-outline-secondary'">
+                    Tháng này
+                </a>
+            </div>
+
+            <!-- Custom Date Range Form -->
+            <div class="col-lg-6 d-flex flex-wrap align-items-center justify-content-lg-end gap-2">
+                <input type="hidden" name="period" value="custom"/>
+                <div class="input-group input-group-sm style-date-input" style="max-width: 170px;">
+                    <span class="input-group-text bg-light text-muted">Từ</span>
+                    <input type="date" name="startDate" class="form-control" th:value="${report.startDate}"/>
+                </div>
+                <div class="input-group input-group-sm style-date-input" style="max-width: 170px;">
+                    <span class="input-group-text bg-light text-muted">Đến</span>
+                    <input type="date" name="endDate" class="form-control" th:value="${report.endDate}"/>
+                </div>
+                <button type="submit" class="btn btn-sm btn-primary rounded-pill px-3">
+                    <i class="fas fa-filter me-1"></i> Lọc
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Overview Stat Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100 position-relative overflow-hidden">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-uppercase small fw-bold text-muted mb-1">Tổng Doanh Thu</div>
+                        <h3 class="fw-bold text-primary m-0" th:text="${#numbers.formatDecimal(report.totalRevenue, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</h3>
+                        <span class="small text-muted" th:text="'Trong ' + ${report.dailyRevenues.size()} + ' ngày đã chọn'">30 ngày</span>
+                    </div>
+                    <div class="bg-primary-subtle text-primary p-3 rounded-4 fs-4">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100 position-relative overflow-hidden">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-uppercase small fw-bold text-muted mb-1">Đơn Hàng Hoàn Thành</div>
+                        <h3 class="fw-bold text-dark m-0" th:text="${report.completedOrdersCount}">0</h3>
+                        <span class="small text-muted" th:text="'/ ' + ${report.totalOrdersCount} + ' tổng đơn hàng (' + ${report.cancelledOrdersCount} + ' bị hủy)'">0 đơn</span>
+                    </div>
+                    <div class="bg-success-subtle text-success p-3 rounded-4 fs-4">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100 position-relative overflow-hidden">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-uppercase small fw-bold text-muted mb-1">Giá Trị Đơn Trung Bình</div>
+                        <h3 class="fw-bold text-dark m-0" th:text="${#numbers.formatDecimal(report.averageOrderValue, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</h3>
+                        <span class="small text-muted">AOV (Average Order Value)</span>
+                    </div>
+                    <div class="bg-warning-subtle text-warning p-3 rounded-4 fs-4">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100 position-relative overflow-hidden">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-uppercase small fw-bold text-muted mb-1">Doanh Thu TB / Ngày</div>
+                        <h3 class="fw-bold text-dark m-0" th:text="${#numbers.formatDecimal(report.dailyAverageRevenue, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</h3>
+                        <span class="small text-muted">Trung bình mỗi ngày</span>
+                    </div>
+                    <div class="bg-info-subtle text-info p-3 rounded-4 fs-4">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row 1: Line Chart & Status Doughnut -->
+    <div class="row g-4 mb-4">
+        <!-- Revenue Line Chart -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold font-serif m-0"><i class="fas fa-chart-area text-primary me-2"></i> Biểu Đồ Doanh Thu Theo Ngày</h5>
+                    <span class="badge bg-light text-muted border">Đơn vị: VNĐ</span>
+                </div>
+                <div style="position: relative; height: 320px;">
+                    <canvas id="revenueLineChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Status Doughnut -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                <h5 class="fw-bold font-serif mb-3"><i class="fas fa-pie-chart text-success me-2"></i> Trạng Thái Đơn Hàng</h5>
+                <div style="position: relative; height: 320px;" class="d-flex align-items-center justify-content-center">
+                    <canvas id="statusDoughnutChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row 2: Daily Orders Count Bar Chart -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <h5 class="fw-bold font-serif mb-3"><i class="fas fa-shopping-cart text-info me-2"></i> Biểu Đồ Số Lượng Đơn Hàng Theo Ngày</h5>
+                <div style="position: relative; height: 250px;">
+                    <canvas id="ordersBarChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Data Tables -->
+    <div class="row g-4">
+        <!-- Daily Breakdown Table -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white h-100">
+                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold font-serif m-0"><i class="fas fa-list text-primary me-2"></i> Chi Tiết Doanh Thu Theo Ngày</h5>
+                    <span class="badge bg-primary rounded-pill" th:text="${report.dailyRevenues.size()} + ' Ngày'">30 Ngày</span>
+                </div>
+                <div class="table-responsive" style="max-height: 420px; overflow-y: auto;">
+                    <table class="table table-hover align-middle m-0">
+                        <thead class="table-light sticky-top">
+                            <tr>
+                                <th>Ngày</th>
+                                <th class="text-center">Số Đơn</th>
+                                <th class="text-end">Doanh Thu</th>
+                                <th class="text-end">Đơn TB</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="day : ${report.dailyRevenues}">
+                                <td class="fw-bold font-monospace text-dark" th:text="${day.formattedDate}">01/10/2026</td>
+                                <td class="text-center">
+                                    <span class="badge bg-light text-dark border px-2 py-1" th:text="${day.orderCount}">0</span>
+                                </td>
+                                <td class="text-end fw-bold text-primary" th:text="${#numbers.formatDecimal(day.revenue, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</td>
+                                <td class="text-end text-muted small" th:text="${#numbers.formatDecimal(day.avgOrderValue, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(report.dailyRevenues)}">
+                                <td colspan="4" class="text-center text-muted py-4">Không có dữ liệu trong khoảng thời gian này</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Selling Products Table -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white h-100">
+                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold font-serif m-0"><i class="fas fa-crown text-warning me-2"></i> Top Sản Phẩm Doanh Thu Cao</h5>
+                    <span class="badge bg-warning text-dark rounded-pill">Top 10</span>
+                </div>
+                <div class="table-responsive" style="max-height: 420px; overflow-y: auto;">
+                    <table class="table table-hover align-middle m-0">
+                        <thead class="table-light sticky-top">
+                            <tr>
+                                <th>Sản Phẩm</th>
+                                <th class="text-center">Đã Bán</th>
+                                <th class="text-end">Doanh Thu</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="prod, iterStat : ${report.topProducts}">
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="badge rounded-circle bg-light text-dark border" style="width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center;" th:text="${iterStat.count}">1</span>
+                                        <img th:src="${prod.image != null ? prod.image : 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=80'}" style="width: 38px; height: 38px; object-fit: cover; border-radius: 6px;">
+                                        <div>
+                                            <div class="fw-bold text-truncate" style="max-width: 150px;" th:text="${prod.productName}">Product</div>
+                                            <div class="small text-muted" th:text="${prod.categoryName}">Cat</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-success-subtle text-success fw-bold px-2 py-1" th:text="${prod.totalQuantity} + ' bánh'">0 bánh</span>
+                                </td>
+                                <td class="text-end fw-bold text-primary" th:text="${#numbers.formatDecimal(prod.totalRevenue, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(report.topProducts)}">
+                                <td colspan="3" class="text-center text-muted py-4">Chưa có dữ liệu bán hàng</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js Inline Script -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener("DOMContentLoaded", function() {
+            // Data extracted from Thymeleaf report model
+            const dailyData = /*[[${report.dailyRevenues}]]*/ [];
+            const statusMap = /*[[${report.statusDistribution}]]*/ {};
+
+            const labels = dailyData.map(item => item.formattedDate);
+            const revenues = dailyData.map(item => item.revenue);
+            const orderCounts = dailyData.map(item => item.orderCount);
+
+            // Format Currency Helper
+            const formatVND = (value) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+
+            // 1. Revenue Line Chart
+            const ctxLine = document.getElementById('revenueLineChart').getContext('2d');
+            const gradient = ctxLine.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(197, 140, 89, 0.4)');
+            gradient.addColorStop(1, 'rgba(197, 140, 89, 0.0)');
+
+            new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                        data: revenues,
+                        borderColor: '#C58C59',
+                        borderWidth: 3,
+                        backgroundColor: gradient,
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: '#C58C59',
+                        pointBorderColor: '#fff',
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ' Doanh thu: ' + formatVND(context.parsed.y);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+                                    if (value >= 1000) return (value / 1000).toFixed(0) + 'k';
+                                    return value;
+                                }
+                            }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // 2. Order Status Doughnut Chart
+            const statusLabels = Object.keys(statusMap);
+            const statusValues = Object.values(statusMap);
+            const ctxDoughnut = document.getElementById('statusDoughnutChart').getContext('2d');
+
+            new Chart(ctxDoughnut, {
+                type: 'doughnut',
+                data: {
+                    labels: statusLabels,
+                    datasets: [{
+                        data: statusValues,
+                        backgroundColor: [
+                            '#FFC107', // PENDING - Warning
+                            '#0D6EFD', // PROCESSING - Info
+                            '#0DCAF0', // SHIPPING - Cyan
+                            '#198754', // COMPLETED - Success
+                            '#DC3545'  // CANCELLED - Danger
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { boxWidth: 12, font: { size: 12 } }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+
+            // 3. Daily Orders Bar Chart
+            const ctxBar = document.getElementById('ordersBarChart').getContext('2d');
+
+            new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Số đơn hàng',
+                        data: orderCounts,
+                        backgroundColor: 'rgba(52, 152, 219, 0.75)',
+                        borderColor: '#2980b9',
+                        borderWidth: 1,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        });
+        /*]]>*/
+    </script>
+</div>
+</body>
+</html>

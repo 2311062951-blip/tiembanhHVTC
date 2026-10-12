@@ -88,7 +88,7 @@
                 <!-- Cart -->
                 <a th:href="@{/cart}" class="hvtc-icon-btn" title="Giỏ hàng">
                     <i class="fas fa-shopping-bag"></i>
-                    <span class="hvtc-badge" th:text="${session.cartCount != null ? session.cartCount : 0}">0</span>
+                    <span class="hvtc-badge" th:text="${cartCount != null ? cartCount : (session.cartCount != null ? session.cartCount : 0)}">0</span>
                 </a>
 
                 <!-- Mobile Menu Button -->

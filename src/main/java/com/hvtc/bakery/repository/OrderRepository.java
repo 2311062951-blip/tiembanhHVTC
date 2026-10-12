@@ -29,4 +29,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     BigDecimal calculateRevenueSince(@Param("startDate") LocalDateTime startDate);
 
     long countByOrderStatus(OrderStatus orderStatus);
+
+    List<Order> findByCreatedAtBetweenOrderByCreatedAtAsc(LocalDateTime start, LocalDateTime end);
 }

@@ -29,7 +29,7 @@
 
                 <div class="mb-3">
                     <label class="form-label small fw-bold">Địa chỉ Email *</label>
-                    <input type="email" th:field="*{email}" class="form-control" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''" placeholder="Ví dụ: yourname@gmail.com" required>
+                    <input type="email" id="emailInput" th:field="*{email}" class="form-control" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''" placeholder="Ví dụ: yourname@gmail.com" required>
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Lỗi email</div>
                 </div>
 
@@ -67,5 +67,18 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const emailParam = urlParams.get('email');
+    if (emailParam) {
+        const emailInput = document.getElementById('emailInput') || document.querySelector('input[type="email"]');
+        if (emailInput) {
+            emailInput.value = emailParam;
+        }
+    }
+});
+</script>
 </body>
 </html>

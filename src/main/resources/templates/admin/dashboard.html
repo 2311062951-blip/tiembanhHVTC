@@ -10,23 +10,14 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h3 class="fw-bold font-serif m-0">Bảng Điều Khiển Quản Trị</h3>
-            <p class="text-muted small m-0">Tổng quan doanh thu, đơn hàng và quản lý sản phẩm bánh tươi HVTC BAKERY</p>
+            <p class="text-muted small m-0">Tổng quan đơn hàng, quản lý sản phẩm và người dùng cửa hàng HVTC BAKERY</p>
         </div>
         <span class="badge bg-primary px-3 py-2 fs-6" th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy HH:mm')}">Thời gian</span>
     </div>
 
     <!-- Stat Cards -->
     <div class="row g-4 mb-4">
-        <div class="col-md-3">
-            <div class="stat-card">
-                <div>
-                    <div class="small text-muted fw-bold text-uppercase">Doanh Thu</div>
-                    <h4 class="fw-bold text-primary m-0 mt-1" th:text="${#numbers.formatDecimal(stats.totalRevenue, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</h4>
-                </div>
-                <div class="stat-icon"><i class="fas fa-coins"></i></div>
-            </div>
-        </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="stat-card">
                 <div>
                     <div class="small text-muted fw-bold text-uppercase">Tổng Đơn Hàng</div>
@@ -36,7 +27,7 @@
                 <div class="stat-icon"><i class="fas fa-shopping-bag"></i></div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="stat-card">
                 <div>
                     <div class="small text-muted fw-bold text-uppercase">Tổng Sản Phẩm</div>
@@ -46,7 +37,7 @@
                 <div class="stat-icon"><i class="fas fa-cookie-bite"></i></div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="stat-card">
                 <div>
                     <div class="small text-muted fw-bold text-uppercase">Khách Hàng</div>

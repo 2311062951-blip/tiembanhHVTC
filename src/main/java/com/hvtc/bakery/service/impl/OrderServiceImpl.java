@@ -21,6 +21,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.hvtc.bakery.dto.CouponApplyResponse;
+import com.hvtc.bakery.entity.Coupon;
+import com.hvtc.bakery.service.CouponService;
+
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
@@ -29,6 +33,7 @@ public class OrderServiceImpl implements OrderService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final CartService cartService;
+    private final CouponService couponService;
 
     @Override
     @Transactional
@@ -62,6 +67,21 @@ public class OrderServiceImpl implements OrderService {
             fullAddress += ", " + form.getProvince();
         }
 
+        BigDecimal discountAmount = BigDecimal.ZERO;
+        String appliedCouponCode = null;
+
+        if (form.getCouponCode() != null && !form.getCouponCode().isBlank()) {
+            CouponApplyResponse couponResp = couponService.validateAndApplyCoupon(form.getCouponCode(), totalAmount);
+            if (couponResp.isSuccess()) {
+                discountAmount = couponResp.getDiscountAmount();
+                appliedCouponCode = couponResp.getCode();
+                try {
+                    Coupon coupon = couponService.findByCode(appliedCouponCode);
+                    coupon.setUsedCount(coupon.getUsedCount() + 1);
+                } catch (Exception ignored) {}
+            }
+        }
+
         Order order = Order.builder()
                 .orderCode(orderCode)
                 .user(user)
@@ -72,6 +92,8 @@ public class OrderServiceImpl implements OrderService {
                 .note(form.getNote())
                 .totalAmount(totalAmount)
                 .shippingFee(shippingFee)
+                .couponCode(appliedCouponCode)
+                .discountAmount(discountAmount)
                 .paymentMethod(form.getPaymentMethod())
                 .paymentStatus(PaymentStatus.UNPAID)
                 .orderStatus(OrderStatus.PENDING)
@@ -188,5 +210,11 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public List<Order> findRecentOrders() {
         return orderRepository.findTop10ByOrderByCreatedAtDesc();
+    }
+
+    @Override
+    @Transactional
+    public void deleteAllOrders() {
+        orderRepository.deleteAll();
     }
 }

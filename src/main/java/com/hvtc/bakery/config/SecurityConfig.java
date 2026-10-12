@@ -60,7 +60,7 @@ public class SecurityConfig {
                 // Auth pages
                 .requestMatchers("/login", "/register", "/forgot-password").permitAll()
                 // Public REST APIs
-                .requestMatchers("/api/products/**", "/api/categories/**", "/api/chatbot/**").permitAll()
+                .requestMatchers("/api/products/**", "/api/categories/**", "/api/chatbot/**", "/api/payment/**", "/api/coupons/**").permitAll()
                 // Cart & Guest checkout (Cart supports guest session as well as logged in user)
                 .requestMatchers("/cart/**", "/checkout/**", "/cart/add", "/cart/update", "/cart/remove").permitAll()
                 // User area

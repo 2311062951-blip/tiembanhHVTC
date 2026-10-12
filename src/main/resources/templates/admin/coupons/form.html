@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin_base}">
+<head>
+    <title th:text="${isEdit ? 'Chỉnh Sửa Mã Giảm Giá - HVTC Admin' : 'Tạo Mã Giảm Giá Mới - HVTC Admin'}">Tạo Mã Giảm Giá</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold font-serif m-0" th:text="${isEdit ? 'Chỉnh Sửa Mã Giảm Giá' : 'Tạo Mã Giảm Giá Mới'}">Tạo Mã Giảm Giá</h3>
+        <a th:href="@{/admin/coupons}" class="btn btn-outline-secondary rounded-pill btn-sm">
+            <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white" style="max-width: 700px;">
+        <form th:action="${isEdit} ? @{'/admin/coupons/edit/' + ${couponDto.id}} : @{/admin/coupons/create}" th:object="${couponDto}" method="post">
+            
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold">Mã Code Giảm Giá *</label>
+                    <input type="text" th:field="*{code}" class="form-control font-monospace text-uppercase" th:classappend="${#fields.hasErrors('code')} ? 'is-invalid' : ''" placeholder="Ví dụ: HVTC10, WELCOME" required>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('code')}" th:errors="*{code}">Lỗi mã code</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold">Phần trăm giảm (%) *</label>
+                    <div class="input-group">
+                        <input type="number" th:field="*{discountPercent}" class="form-control" th:classappend="${#fields.hasErrors('discountPercent')} ? 'is-invalid' : ''" min="1" max="100" placeholder="10" required>
+                        <span class="input-group-text">%</span>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('discountPercent')}" th:errors="*{discountPercent}">Lỗi phần trăm</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold">Đơn hàng tối thiểu (VNĐ)</label>
+                    <input type="number" th:field="*{minOrderAmount}" class="form-control" placeholder="Ví dụ: 100000 (Để 0 nếu không yêu cầu)">
+                    <div class="form-text small">Số tiền đơn hàng tối thiểu để được áp dụng mã.</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold">Số tiền giảm tối đa (VNĐ)</label>
+                    <input type="number" th:field="*{maxDiscountAmount}" class="form-control" placeholder="Ví dụ: 50000 (Bỏ trống nếu không giới hạn)">
+                    <div class="form-text small">Hạn mức tiền giảm tối đa cho mỗi đơn hàng.</div>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold">Hạn sử dụng</label>
+                    <input type="datetime-local" th:field="*{expirationDate}" class="form-control">
+                    <div class="form-text small">Để trống nếu mã có hiệu lực vĩnh viễn.</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold">Giới hạn số lượt dùng</label>
+                    <input type="number" th:field="*{usageLimit}" class="form-control" min="1" placeholder="Ví dụ: 100 lượt">
+                    <div class="form-text small">Tổng số lượt áp dụng tối đa của mã.</div>
+                </div>
+            </div>
+
+            <div class="mb-4 form-check form-switch">
+                <input class="form-check-input" type="checkbox" th:field="*{active}" id="activeSwitch" checked>
+                <label class="form-check-label fw-bold small ms-2" for="activeSwitch">Kích hoạt mã giảm giá ngay</label>
+            </div>
+
+            <div class="d-flex gap-2 pt-3 border-top">
+                <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold">
+                    <i class="fas fa-save me-1"></i> <span th:text="${isEdit ? 'Cập Nhật Mã' : 'Tạo Mã Giảm Giá'}">Lưu</span>
+                </button>
+                <a th:href="@{/admin/coupons}" class="btn btn-light rounded-pill px-4">Hủy bỏ</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

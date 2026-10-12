@@ -80,14 +80,9 @@
                 <div class="bg-white p-4 rounded-4 border shadow-sm">
                     <h5 class="fw-bold border-bottom pb-3 font-serif">Tóm Tắt Đơn Hàng</h5>
                     
-                    <div class="d-flex justify-content-between mb-2">
+                    <div class="d-flex justify-content-between mb-3">
                         <span class="text-muted">Tạm tính:</span>
                         <span class="fw-bold" th:text="${#numbers.formatDecimal(cart.getTotalAmount(), 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
-                    </div>
-
-                    <div class="d-flex justify-content-between mb-3">
-                        <span class="text-muted">Phí giao hàng:</span>
-                        <span class="fw-bold text-success">Miễn phí</span>
                     </div>
 
                     <hr>

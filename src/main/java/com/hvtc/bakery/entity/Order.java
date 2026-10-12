@@ -49,6 +49,13 @@ public class Order {
     @Builder.Default
     private BigDecimal shippingFee = BigDecimal.ZERO;
 
+    @Column(name = "coupon_code", length = 50)
+    private String couponCode;
+
+    @Column(name = "discount_amount", precision = 12, scale = 0)
+    @Builder.Default
+    private BigDecimal discountAmount = BigDecimal.ZERO;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false, length = 30)
     private PaymentMethod paymentMethod;
@@ -76,6 +83,10 @@ public class Order {
     }
 
     public BigDecimal getGrandTotal() {
-        return totalAmount.add(shippingFee != null ? shippingFee : BigDecimal.ZERO);
+        BigDecimal base = totalAmount != null ? totalAmount : BigDecimal.ZERO;
+        BigDecimal ship = shippingFee != null ? shippingFee : BigDecimal.ZERO;
+        BigDecimal disc = discountAmount != null ? discountAmount : BigDecimal.ZERO;
+        BigDecimal grand = base.add(ship).subtract(disc);
+        return grand.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : grand;
     }
 }

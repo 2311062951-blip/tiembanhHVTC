@@ -3,10 +3,10 @@ package com.hvtc.bakery.service.impl;
 import com.hvtc.bakery.dto.ProductDto;
 import com.hvtc.bakery.entity.Category;
 import com.hvtc.bakery.entity.Product;
+import com.hvtc.bakery.entity.OrderItem;
 import com.hvtc.bakery.exception.BadRequestException;
 import com.hvtc.bakery.exception.ResourceNotFoundException;
-import com.hvtc.bakery.repository.CategoryRepository;
-import com.hvtc.bakery.repository.ProductRepository;
+import com.hvtc.bakery.repository.*;
 import com.hvtc.bakery.service.FileStorageService;
 import com.hvtc.bakery.service.ProductService;
 import com.hvtc.bakery.util.CodeGenerator;
@@ -29,6 +29,10 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final FileStorageService fileStorageService;
+    private final CartItemRepository cartItemRepository;
+    private final FavoriteRepository favoriteRepository;
+    private final ReviewRepository reviewRepository;
+    private final OrderItemRepository orderItemRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -166,6 +170,26 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public void deleteProduct(Long id) {
         Product product = findById(id);
+
+        // 1. Unlink product from order items (preserve historical order receipts)
+        List<OrderItem> orderItems = orderItemRepository.findByProductId(id);
+        if (orderItems != null && !orderItems.isEmpty()) {
+            for (OrderItem item : orderItems) {
+                item.setProduct(null);
+            }
+            orderItemRepository.saveAll(orderItems);
+        }
+
+        // 2. Clear cart items referencing this product
+        cartItemRepository.deleteByProductId(id);
+
+        // 3. Clear favorites referencing this product
+        favoriteRepository.deleteByProductId(id);
+
+        // 4. Clear reviews referencing this product
+        reviewRepository.deleteByProductId(id);
+
+        // 5. Delete product (product_images are deleted automatically via CascadeType.ALL)
         productRepository.delete(product);
     }
 

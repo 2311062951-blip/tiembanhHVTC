@@ -28,11 +28,18 @@ public class CheckoutForm {
     @NotBlank(message = "Địa chỉ nhận hàng không được để trống")
     private String address;
 
+    @NotBlank(message = "Tỉnh/Thành phố không được để trống")
     private String province;
+
+    @NotBlank(message = "Quận/Huyện không được để trống")
     private String district;
+
+    @NotBlank(message = "Phường/Xã không được để trống")
     private String ward;
 
     private String note;
+
+    private String couponCode;
 
     @NotNull(message = "Vui lòng chọn phương thức thanh toán")
     private PaymentMethod paymentMethod;
