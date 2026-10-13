@@ -90,7 +90,7 @@
 
                         <!-- Image -->
                         <a th:href="@{'/product/' + ${product.slug}}" class="hvtc-product-img-wrap">
-                            <img th:src="${product.image != null ? product.image : 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600'}" th:alt="${product.name}" class="hvtc-product-img">
+                            <img th:src="${product.image != null ? product.image : ''}" th:alt="${product.name}" class="hvtc-product-img" th:attr="data-category=${product.category != null ? product.category.slug : ''}" onerror="handleImgError(this)">
                         </a>
 
                         <!-- Body -->
@@ -140,7 +140,7 @@
                             <span class="hvtc-badge-tag hvtc-badge-hot">Bánh Tiệc</span>
                         </div>
                         <a th:href="@{'/product/' + ${product.slug}}" class="hvtc-product-img-wrap">
-                            <img th:src="${product.image != null ? product.image : 'https://images.unsplash.com/photo-1535141192574-5d4897c13136?w=600'}" th:alt="${product.name}" class="hvtc-product-img">
+                            <img th:src="${product.image != null ? product.image : ''}" th:alt="${product.name}" class="hvtc-product-img" th:attr="data-category=${product.category != null ? product.category.slug : 'banh-sinh-nhat'}" onerror="handleImgError(this)">
                         </a>
                         <div class="hvtc-product-body">
                             <div class="hvtc-product-category">Bánh Sinh Nhật</div>

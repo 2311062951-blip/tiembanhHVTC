@@ -85,7 +85,7 @@
                                 <span th:if="${product.bestSeller}" class="hvtc-badge-tag hvtc-badge-hot">Bán Chạy</span>
                             </div>
                             <a th:href="@{'/product/' + ${product.slug}}" class="hvtc-product-img-wrap">
-                                <img th:src="${product.image != null ? product.image : 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600'}" th:alt="${product.name}" class="hvtc-product-img">
+                                <img th:src="${product.image != null ? product.image : ''}" th:alt="${product.name}" class="hvtc-product-img" th:attr="data-category=${product.category != null ? product.category.slug : ''}" onerror="handleImgError(this)">
                             </a>
                             <div class="hvtc-product-body">
                                 <div class="hvtc-product-category" th:text="${product.category != null ? product.category.name : 'HVTC Bakery'}">Bánh Ngọt</div>
